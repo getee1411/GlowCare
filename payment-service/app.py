@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 import requests
 import uuid
 from datetime import datetime
 from model import db, Payment
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///payments.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -48,9 +50,9 @@ def get_payments():
     user_id = request.args.get('user_id')
     
     if user_id:
-        payments = Payment.query.filter_by(user_id=user_id).all()
+        payments = Payment.query.filter_by(user_id=user_id).order_by(Payment.created_at.desc()).all() # Ditambahkan .order_by(Payment.created_at.desc())
     else:
-        payments = Payment.query.all()
+        payments = Payment.query.order_by(Payment.created_at.desc()).all() # Ditambahkan .order_by(Payment.created_at.desc())
     
     result = []
     for payment in payments:
@@ -86,11 +88,19 @@ def get_payment(payment_id):
 def update_payment_status(payment_id):
     payment = Payment.query.get_or_404(payment_id)
     data = request.get_json()
+    new_status = data.get('status')
     
+    if not new_status:
+        return jsonify({'message': 'Status is required'}), 400
+
+    # Logic to prevent changing from 'completed' to 'failed'
+    if payment.status == 'completed' and new_status == 'failed':
+        return jsonify({'message': 'Cannot change status from completed to failed'}), 400
+        
     old_status = payment.status
-    payment.status = data['status']
+    payment.status = new_status
     
-    if data['status'] == 'completed' and old_status != 'completed':
+    if new_status == 'completed' and old_status != 'completed':
         payment.paid_at = datetime.utcnow()
         
         # Update appointment status
@@ -98,7 +108,10 @@ def update_payment_status(payment_id):
             response = requests.post(
                 f'{APPOINTMENT_SERVICE_URL}/appointments/{payment.appointment_id}/confirm-payment'
             )
-        except requests.exceptions.RequestException:
+            # You might want to handle response status from appointment service here
+        except requests.exceptions.RequestException as e:
+            # Log the error but allow payment status update to proceed
+            print(f"Error updating appointment status for payment {payment_id}: {e}")
             pass  # Continue even if appointment service is unavailable
     
     db.session.commit()

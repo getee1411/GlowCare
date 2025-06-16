@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowCare Salon</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <a href="#" class="logo" onclick="showSection('home')">GlowCare Salon</a>
+            <nav>
+                <ul>
+                    <li><a href="#" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#" onclick="showSection('treatments')"><i class="fas fa-spa"></i> Treatments</a></li>
+                    <li id="appointmentsNavItem" style="display:none;"><a href="#" onclick="showSection('appointments')"><i class="fas fa-calendar-alt"></i> Appointments</a></li>
+                    <li id="paymentsNavItem" style="display:none;"><a href="#" onclick="showSection('payments')"><i class="fas fa-credit-card"></i> Payments</a></li>
+                    <li id="profileNavItem" style="display:none;"><a href="#" onclick="showSection('profile')"><i class="fas fa-user"></i> Profile</a></li>
+                    <li id="authNavItem"><a href="#" onclick="showSection('auth')"><i class="fas fa-sign-in-alt"></i> Login/Register</a></li>
+                    <li id="logoutNavItem" style="display:none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="home" class="active">
+            <h2>Welcome to GlowCare Salon</h2>
+            <p>Your path to radiant skin and ultimate relaxation. Explore our services and book your next appointment with ease.</p>
+            <div class="hero-image"></div>
+            <p>We offer a wide range of treatments designed to rejuvenate your mind, body, and spirit. From luxurious facials to relaxing massages, our expert team is here to provide you with the best care.</p>
+        </section>
+
+        <section id="auth" style="display:none;">
+            <h2>Login or Register</h2>
+            <div class="auth-forms">
+                <div class="form-card">
+                    <h3>Register New Account</h3>
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label for="registerName">Name:</label>
+                            <input type="text" id="registerName" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmail">Email:</label>
+                            <input type="email" id="registerEmail" placeholder="your@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword">Password:</label>
+                            <input type="password" id="registerPassword" placeholder="********" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerRole">Role:</label>
+                            <select id="registerRole">
+                                <option value="pasien">Pasien</option>
+                                <option value="dokter">Dokter</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </form>
+                    <p id="registerMessage" class="message"></p>
+                </div>
+
+                <div class="form-card">
+                    <h3>Login to Your Account</h3>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail">Email:</label>
+                            <input type="email" id="loginEmail" placeholder="your@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password:</label>
+                            <input type="password" id="loginPassword" placeholder="********" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                    <p id="loginMessage" class="message"></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="profile" style="display:none;">
+            <h2>Your Profile</h2>
+            <div id="profileDetails" class="card">
+                <h3>Personal Information</h3>
+                <p><strong>Name:</strong> <span id="profileName"></span></p>
+                <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                <p><strong>Role:</strong> <span id="profileRole"></span></p>
+                <button class="btn btn-secondary" onclick="document.getElementById('editProfileFormCard').style.display='block'">Edit Profile</button>
+            </div>
+
+            <div id="editProfileFormCard" class="form-card" style="display:none;">
+                <h3>Edit Your Information</h3>
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label for="editName">New Name:</label>
+                        <input type="text" id="editName" placeholder="New Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">New Email:</label>
+                        <input type="email" id="editEmail" placeholder="New Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPassword">New Password (optional):</label>
+                        <input type="password" id="editPassword" placeholder="Leave blank to keep current">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('editProfileFormCard').style.display='none'">Cancel</button>
+                </form>
+                <p id="editProfileMessage" class="message"></p>
+            </div>
+        </section>
+
+        <section id="treatments" style="display:none;">
+            <h2>Our Available Treatments</h2>
+            <div id="addTreatmentSection" style="display:none;"> <div class="form-card">
+                    <h3>Add New Treatment</h3>
+                    <form id="newTreatmentForm">
+                        <div class="form-group">
+                            <label for="newTreatmentName">Treatment Name:</label>
+                            <input type="text" id="newTreatmentName" placeholder="e.g., Facial Treatment" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newTreatmentDescription">Description:</label>
+                            <textarea id="newTreatmentDescription" placeholder="Detailed description of the treatment"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="newTreatmentPrice">Price (Rp):</label>
+                            <input type="number" id="newTreatmentPrice" placeholder="e.g., 150000" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newTreatmentDuration">Duration (minutes):</label>
+                            <input type="number" id="newTreatmentDuration" placeholder="e.g., 60" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Treatment</button>
+                    </form>
+                    <p id="addTreatmentMessage" class="message"></p>
+                </div>
+            </div>
+            <div id="treatmentsList" class="grid-container">
+                <p>Loading treatments...</p>
+            </div>
+        </section>
+
+        <section id="appointments" style="display:none;">
+            <h2>Your Appointments</h2>
+            <div id="bookAppointmentSection" class="form-card" style="display:none;"> <h3>Book a New Appointment</h3>
+                <form id="appointmentBookingForm">
+                    <div class="form-group">
+                        <label for="bookingTreatment">Select Treatment:</label>
+                        <select id="bookingTreatment" required>
+                            <option value="">-- Loading Treatments --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentDate">Appointment Date & Time:</label>
+                        <input type="datetime-local" id="appointmentDate" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Book Appointment</button>
+                </form>
+                <p id="appointmentBookingMessage" class="message"></p>
+            </div>
+
+            <h3>Upcoming & Past Appointments</h3>
+            <div id="appointmentsList" class="list-container">
+                <p>Loading appointments...</p>
+            </div>
+        </section>
+
+        <section id="payments" style="display:none;">
+            <h2>Payments Overview</h2>
+            <div id="createPaymentSection" class="form-card" style="display:none;"> <h3>Initiate New Payment</h3>
+                <form id="paymentCreationForm">
+                    <div class="form-group">
+                        <label for="paymentAppointmentId">Appointment ID:</label>
+                        <input type="number" id="paymentAppointmentId" placeholder="ID of the appointment" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentAmount">Amount (Rp):</label>
+                        <input type="number" id="paymentAmount" placeholder="Amount (auto-filled)" readonly required>
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentMethod">Payment Method:</label>
+                        <input type="text" id="paymentMethod" placeholder="e.g., transfer, cash, credit_card" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Payment Request</button>
+                </form>
+                <p id="createPaymentMessage" class="message"></p>
+            </div>
+
+            <h3>All Your Payments</h3>
+            <div id="paymentsList" class="list-container">
+                <p>Loading payments...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 GlowCare Salon. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Base URLs for your microservices
+        const USER_SERVICE_URL = 'http://localhost:5001';
+        const APPOINTMENT_SERVICE_URL = 'http://localhost:5002';
+        const TREATMENT_SERVICE_URL = 'http://localhost:5003';
+        const PAYMENT_SERVICE_URL = 'http://localhost:5004';
+
+        let accessToken = localStorage.getItem('access_token') || null;
+        let currentUserRole = localStorage.getItem('user_role') || null;
+        let currentUserId = localStorage.getItem('user_id') || null;
+
+        // Function to show/hide sections
+        function showSection(sectionId) {
+            document.querySelectorAll('main section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+
+            // Specific actions when a section is shown
+            if (sectionId === 'auth') {
+                // If already logged in, redirect to profile
+                if (accessToken) {
+                    showSection('profile');
+                    return;
+                }
+            } else if (sectionId === 'profile') {
+                if (!accessToken) {
+                    alert('Please log in to view your profile.');
+                    showSection('auth');
+                    return;
+                }
+                fetchUserProfile();
+            } else if (sectionId === 'treatments') {
+                fetchTreatments();
+            } else if (sectionId === 'appointments') {
+                if (!accessToken) {
+                    document.getElementById('appointmentsList').innerHTML = '<p class="info-message">Please log in to view appointments.</p>';
+                    document.getElementById('bookAppointmentSection').style.display = 'none';
+                    return;
+                }
+                // Show booking section only for 'pasien'
+                document.getElementById('bookAppointmentSection').style.display = currentUserRole === 'pasien' ? 'block' : 'none';
+                if (currentUserRole === 'pasien') {
+                    fetchTreatmentsForBooking(); // Populate treatment dropdown only for patients
+                }
+                fetchAppointments();
+            } else if (sectionId === 'payments') {
+                if (!accessToken) {
+                    document.getElementById('paymentsList').innerHTML = '<p class="info-message">Please log in to view your payments.</p>';
+                    document.getElementById('createPaymentSection').style.display = 'none';
+                    return;
+                }
+                // Show create payment section only for 'pasien'
+                document.getElementById('createPaymentSection').style.display = currentUserRole === 'pasien' ? 'block' : 'none';
+                fetchPayments();
+            }
+            updateAuthNav(); // Always update navigation after changing section
+        }
+
+        // Function to update navigation items based on login status and role
+        function updateAuthNav() {
+            // Hide all role-specific items first
+            document.getElementById('appointmentsNavItem').style.display = 'none';
+            document.getElementById('paymentsNavItem').style.display = 'none';
+            document.getElementById('profileNavItem').style.display = 'none';
+            document.getElementById('logoutNavItem').style.display = 'none';
+            document.getElementById('authNavItem').style.display = 'list-item'; // Show login/register by default
+
+            if (accessToken) {
+                document.getElementById('authNavItem').style.display = 'none'; // Hide login/register
+                document.getElementById('profileNavItem').style.display = 'list-item';
+                document.getElementById('logoutNavItem').style.display = 'list-item';
+
+                if (currentUserRole === 'pasien' || currentUserRole === 'dokter' || currentUserRole === 'admin') {
+                    document.getElementById('appointmentsNavItem').style.display = 'list-item';
+                }
+                if (currentUserRole === 'pasien' || currentUserRole === 'admin') {
+                    document.getElementById('paymentsNavItem').style.display = 'list-item';
+                }
+            }
+        }
+
+        // --- User Service Interactions ---
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const role = document.getElementById('registerRole').value; // Get selected role
+
+            try {
+                const response = await fetch(`${USER_SERVICE_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, role })
+                });
+                const data = await response.json();
+                document.getElementById('registerMessage').textContent = data.message;
+                document.getElementById('registerMessage').className = response.ok ? 'message success' : 'message error';
+                if (response.ok) {
+                    document.getElementById('registerForm').reset();
+                }
+            } catch (error) {
+                document.getElementById('registerMessage').textContent = 'Error registering user. Please try again.';
+                document.getElementById('registerMessage').className = 'message error';
+                console.error('Error:', error);
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${USER_SERVICE_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    accessToken = data.access_token;
+                    currentUserRole = data.role;
+                    currentUserId = data.user_id;
+                    localStorage.setItem('access_token', accessToken);
+                    localStorage.setItem('user_role', currentUserRole);
+                    localStorage.setItem('user_id', currentUserId);
+                    document.getElementById('loginMessage').textContent = 'Login successful!';
+                    document.getElementById('loginMessage').className = 'message success';
+                    updateAuthNav();
+                    showSection('home'); // Redirect to home or profile after login
+                    alert(`Login successful as ${currentUserRole}!`);
+                } else {
+                    document.getElementById('loginMessage').textContent = data.message || 'Login failed. Invalid credentials.';
+                    document.getElementById('loginMessage').className = 'message error';
+                }
+            } catch (error) {
+                document.getElementById('loginMessage').textContent = 'Error during login. Please check network.';
+                document.getElementById('loginMessage').className = 'message error';
+                console.error('Error:', error);
+            }
+        });
+
+        async function fetchUserProfile() {
+            if (!accessToken) return;
+            try {
+                const response = await fetch(`${USER_SERVICE_URL}/profile`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById('profileName').textContent = data.name;
+                    document.getElementById('profileEmail').textContent = data.email;
+                    document.getElementById('profileRole').textContent = data.role;
+                    // Populate edit form
+                    document.getElementById('editName').value = data.name;
+                    document.getElementById('editEmail').value = data.email;
+                } else {
+                    console.error('Failed to fetch profile:', data.message);
+                    document.getElementById('profileDetails').innerHTML = '<p class="error-message">Failed to load profile. Please log in again.</p>';
+                    logout(); // Log out if token is invalid
+                }
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+                document.getElementById('profileDetails').innerHTML = '<p class="error-message">Error fetching profile. Check your network.</p>';
+            }
+        }
+
+        document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!accessToken) {
+                document.getElementById('editProfileMessage').textContent = 'Please log in.';
+                document.getElementById('editProfileMessage').className = 'message error';
+                return;
+            }
+            const name = document.getElementById('editName').value;
+            const email = document.getElementById('editEmail').value;
+            const password = document.getElementById('editPassword').value;
+
+            const updateData = {};
+            if (name) updateData.name = name;
+            if (email) updateData.email = email;
+            if (password) updateData.password = password;
+
+            try {
+                const response = await fetch(`${USER_SERVICE_URL}/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                const data = await response.json();
+                document.getElementById('editProfileMessage').textContent = data.message;
+                document.getElementById('editProfileMessage').className = response.ok ? 'message success' : 'message error';
+                if (response.ok) {
+                    fetchUserProfile(); // Refresh profile display
+                    document.getElementById('editProfileFormCard').style.display = 'none'; // Hide form after update
+                }
+            } catch (error) {
+                document.getElementById('editProfileMessage').textContent = 'Error updating profile.';
+                document.getElementById('editProfileMessage').className = 'message error';
+                console.error('Error:', error);
+            }
+        });
+
+        function logout() {
+            accessToken = null;
+            currentUserRole = null;
+            currentUserId = null;
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user_role');
+            localStorage.removeItem('user_id');
+            alert('Logged out successfully.');
+            showSection('home');
+            updateAuthNav();
+        }
+
+        // --- Treatment Service Interactions ---
+        async function fetchTreatments() {
+            try {
+                const response = await fetch(`${TREATMENT_SERVICE_URL}/treatments`);
+                const treatments = await response.json();
+                const treatmentsListDiv = document.getElementById('treatmentsList');
+                treatmentsListDiv.innerHTML = ''; // Clear previous content
+
+                if (treatments.length === 0) {
+                    treatmentsListDiv.innerHTML = '<p class="info-message">No treatments available at the moment.</p>';
+                } else {
+                    treatments.forEach(treatment => {
+                        const treatmentCard = document.createElement('div');
+                        treatmentCard.className = 'card treatment-card';
+                        let adminButtons = '';
+                        if (currentUserRole === 'admin') {
+                            adminButtons = `<button class="btn btn-danger" onclick="deleteTreatment(${treatment.id})">Delete</button>`;
+                            // Add edit functionality here if desired (e.g., a modal or another form)
+                        }
+                        treatmentCard.innerHTML = `
+                            <h3>${treatment.name}</h3>
+                            <p>${treatment.description}</p>
+                            <p><strong>Price:</strong> Rp ${treatment.price.toLocaleString('id-ID')}</p>
+                            <p><strong>Duration:</strong> ${treatment.duration} minutes</p>
+                            <div class="card-actions">${adminButtons}</div>
+                        `;
+                        treatmentsListDiv.appendChild(treatmentCard);
+                    });
+                }
+
+                // Show "Add New Treatment" form only for admin
+                if (currentUserRole === 'admin') {
+                    document.getElementById('addTreatmentSection').style.display = 'block';
+                } else {
+                    document.getElementById('addTreatmentSection').style.display = 'none';
+                }
+
+            } catch (error) {
+                document.getElementById('treatmentsList').innerHTML = '<p class="error-message">Error loading treatments. Please check service status.</p>';
+                console.error('Error:', error);
+            }
+        }
+
+        document.getElementById('newTreatmentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (currentUserRole !== 'admin' || !accessToken) {
+                document.getElementById('addTreatmentMessage').textContent = 'Unauthorized action: Only admins can add treatments.';
+                document.getElementById('addTreatmentMessage').className = 'message error';
+                return;
+            }
+
+            const name = document.getElementById('newTreatmentName').value;
+            const description = document.getElementById('newTreatmentDescription').value;
+            const price = parseInt(document.getElementById('newTreatmentPrice').value);
+            const duration = parseInt(document.getElementById('newTreatmentDuration').value);
+
+            try {
+                const response = await fetch(`${TREATMENT_SERVICE_URL}/treatments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}` // Assuming admin actions are authenticated
+                    },
+                    body: JSON.stringify({ name, description, price, duration })
+                });
+                const data = await response.json();
+                document.getElementById('addTreatmentMessage').textContent = data.message;
+                document.getElementById('addTreatmentMessage').className = response.ok ? 'message success' : 'message error';
+                if (response.ok) {
+                    fetchTreatments(); // Refresh list
+                    document.getElementById('newTreatmentForm').reset();
+                }
+            } catch (error) {
+                document.getElementById('addTreatmentMessage').textContent = 'Error adding treatment. Check service connection.';
+                document.getElementById('addTreatmentMessage').className = 'message error';
+                console.error('Error:', error);
+            }
+        });
+
+        async function deleteTreatment(treatmentId) {
+            if (!confirm('Are you sure you want to delete this treatment? This action cannot be undone.')) return;
+            if (currentUserRole !== 'admin' || !accessToken) {
+                alert('Unauthorized action.');
+                return;
+            }
+            try {
+                const response = await fetch(`${TREATMENT_SERVICE_URL}/treatments/${treatmentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                const data = await response.json();
+                alert(data.message);
+                if (response.ok) {
+                    fetchTreatments(); // Refresh list
+                }
+            } catch (error) {
+                alert('Error deleting treatment. Check service connection.');
+                console.error('Error:', error);
+            }
+        }
+
+        async function fetchTreatmentsForBooking() {
+            try {
+                const response = await fetch(`${TREATMENT_SERVICE_URL}/treatments`);
+                const treatments = await response.json();
+                const selectElement = document.getElementById('bookingTreatment');
+                selectElement.innerHTML = '<option value="">-- Select a Treatment --</option>'; // Clear and add default
+
+                if (treatments.length === 0) {
+                     selectElement.innerHTML = '<option value="">-- No Treatments Available --</option>';
+                } else {
+                    treatments.forEach(treatment => {
+                        const option = document.createElement('option');
+                        option.value = treatment.id;
+                        option.textContent = `${treatment.name} (Rp ${treatment.price.toLocaleString('id-ID')}, ${treatment.duration} mins)`;
+                        selectElement.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading treatments for booking:', error);
+                document.getElementById('bookingTreatment').innerHTML = '<option value="">-- Error Loading Treatments --</option>';
+            }
+        }
+
+
+        // --- Appointment Service Interactions ---
+        document.getElementById('appointmentBookingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!accessToken || currentUserRole !== 'pasien') {
+                document.getElementById('appointmentBookingMessage').textContent = 'Unauthorized: Only patients can book an appointment.';
+                document.getElementById('appointmentBookingMessage').className = 'message error';
+                return;
+            }
+
+            const treatmentId = document.getElementById('bookingTreatment').value;
+            const appointmentDate = document.getElementById('appointmentDate').value;
+
+            if (!treatmentId || !appointmentDate) {
+                document.getElementById('appointmentBookingMessage').textContent = 'Please select a treatment and date/time.';
+                document.getElementById('appointmentBookingMessage').className = 'message error';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${USER_SERVICE_URL}/book-appointment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({
+                        user_id: currentUserId, // user-service handles user_id from token, but sending for clarity
+                        treatment_id: parseInt(treatmentId),
+                        appointment_date: appointmentDate.replace('T', ' ') // Format for backend
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('appointmentBookingMessage').textContent = data.message;
+                document.getElementById('appointmentBookingMessage').className = response.ok ? 'message success' : 'message error';
+                if (response.ok) {
+                    fetchAppointments(); // Refresh appointments list
+                    document.getElementById('appointmentBookingForm').reset();
+                }
+            } catch (error) {
+                document.getElementById('appointmentBookingMessage').textContent = 'Error booking appointment. Check service connection.';
+                document.getElementById('appointmentBookingMessage').className = 'message error';
+                console.error('Error:', error);
+            }
+        });
+
+        async function fetchAppointments() {
+            if (!accessToken) {
+                document.getElementById('appointmentsList').innerHTML = '<p class="info-message">Please log in to view appointments.</p>';
+                return;
+            }
+
+            let url = `${USER_SERVICE_URL}/appointments`; // Using user service endpoint, which handles role-based filtering
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                const appointments = await response.json();
+                const appointmentsListDiv = document.getElementById('appointmentsList');
+                appointmentsListDiv.innerHTML = '';
+
+                if (appointments.length === 0) {
+                    appointmentsListDiv.innerHTML = '<p class="info-message">No appointments found.</p>';
+                    return;
+                }
+
+                appointments.forEach(appointment => {
+                    const appointmentCard = document.createElement('div');
+                    appointmentCard.className = 'card appointment-card';
+                    let buttons = '';
+                    if (currentUserRole === 'admin') {
+                        // Admin can manage (update/delete) appointments
+                        buttons += `<button class="btn btn-warning" onclick="cancelAppointment(${appointment.id})">Cancel</button> `;
+                        buttons += `<button class="btn btn-danger" onclick="deleteAppointment(${appointment.id})">Delete</button>`;
+                    } else if (currentUserRole === 'pasien' && (appointment.status === 'pending')) {
+                         buttons += `<button class="btn btn-warning" onclick="cancelAppointment(${appointment.id})">Cancel</button>`;
+                    }
+
+                    appointmentCard.innerHTML = `
+                        <h4>Appointment ID: ${appointment.id}</h4>
+                        <p><strong>User ID:</strong> ${appointment.user_id}</p>
+                        <p><strong>Treatment ID:</strong> ${appointment.treatment_id}</p>
+                        <p><strong>Date & Time:</strong> ${new Date(appointment.appointment_date).toLocaleString()}</p>
+                        <p><strong>Status:</strong> <span class="status ${appointment.status}">${appointment.status.toUpperCase()}</span></p>
+                        <div class="card-actions">${buttons}</div>
+                    `;
+                    appointmentsListDiv.appendChild(appointmentCard);
+                });
+
+            } catch (error) {
+                document.getElementById('appointmentsList').innerHTML = '<p class="error-message">Error loading appointments. Check service connection.</p>';
+                console.error('Error:', error);
+            }
+        }
+
+        async function updateAppointmentStatus(appointmentId, status) {
+            if (currentUserRole !== 'admin' || !accessToken) {
+                alert('Unauthorized action: Only admin can manage appointments.');
+                return;
+            }
+            try {
+                const response = await fetch(`${USER_SERVICE_URL}/appointments/${appointmentId}`, { // Using user service endpoint
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+                const data = await response.json();
+                alert(data.message);
+                if (response.ok) {
+                    fetchAppointments();
+                }
+            }
+             catch (error) {
+                alert('Error updating appointment status. Check service connection.');
+                console.error('Error:', error);
+            }
+        }
+
+        async function cancelAppointment(appointmentId) {
+            if (!confirm('Are you sure you want to cancel this appointment?')) return;
+            if (!accessToken || (currentUserRole !== 'pasien' && currentUserRole !== 'admin')) {
+                alert('Unauthorized: Only patients or admin can cancel appointments.');
+                return;
+            }
+            try {
+                // Directly call appointment service for cancel
+                const response = await fetch(`${APPOINTMENT_SERVICE_URL}/appointments/${appointmentId}/cancel`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${accessToken}` || '' }
+                });
+                const data = await response.json();
+                alert(data.message);
+                if (response.ok) {
+                    fetchAppointments();
+                }
+            } catch (error) {
+                alert('Error cancelling appointment. Check service connection.');
+                console.error('Error:', error);
+            }
+        }
+
+        async function deleteAppointment(appointmentId) {
+            if (!confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) return;
+             if (currentUserRole !== 'admin' || !accessToken) {
+                alert('Unauthorized action: Only admin can delete appointments.');
+                return;
+            }
+            try {
+                const response = await fetch(`${USER_SERVICE_URL}/appointments/${appointmentId}`, { // Using user service endpoint
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                const data = await response.json();
+                alert(data.message);
+                if (response.ok) {
+                    fetchAppointments();
+                }
+            } catch (error) {
+                alert('Error deleting appointment. Check service connection.');
+                console.error('Error:', error);
+            }
+        }
+
+        // --- Payment Service Interactions ---
+
+        // NEW: Event listener for appointment ID input to auto-fill amount
+        document.getElementById('paymentAppointmentId').addEventListener('change', async (e) => {
+            const appointmentId = e.target.value;
+            const paymentAmountInput = document.getElementById('paymentAmount');
+            paymentAmountInput.value = ''; // Clear previous value
+            paymentAmountInput.placeholder = 'Fetching amount...';
+
+            if (!appointmentId) {
+                paymentAmountInput.placeholder = 'Amount (auto-filled)';
+                return;
+            }
+
+            try {
+                // 1. Fetch appointment details
+                const appointmentResponse = await fetch(`${APPOINTMENT_SERVICE_URL}/appointments/${appointmentId}`);
+                if (!appointmentResponse.ok) {
+                    throw new Error(`Appointment not found for ID: ${appointmentId}`);
+                }
+                const appointmentData = await appointmentResponse.json();
+                const treatmentId = appointmentData.treatment_id;
+
+                // 2. Fetch treatment details to get price
+                const treatmentResponse = await fetch(`${TREATMENT_SERVICE_URL}/treatments/${treatmentId}`);
+                if (!treatmentResponse.ok) {
+                    throw new Error(`Treatment not found for ID: ${treatmentId}`);
+                }
+                const treatmentData = await treatmentResponse.json();
+                const amount = treatmentData.price;
+
+                paymentAmountInput.value = amount;
+                paymentAmountInput.placeholder = `Amount: Rp ${amount.toLocaleString('id-ID')}`;
+            } catch (error) {
+                paymentAmountInput.placeholder = 'Error fetching amount';
+                document.getElementById('createPaymentMessage').textContent = `Error: ${error.message}`;
+                document.getElementById('createPaymentMessage').className = 'message error';
+                console.error('Error auto-filling amount:', error);
+            }
+        });
+
+
+        document.getElementById('paymentCreationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!accessToken || currentUserRole !== 'pasien') {
+                document.getElementById('createPaymentMessage').textContent = 'Unauthorized: Only patients can create a payment.';
+                document.getElementById('createPaymentMessage').className = 'message error';
+                return;
+            }
+
+            const appointmentId = parseInt(document.getElementById('paymentAppointmentId').value);
+            const amount = parseInt(document.getElementById('paymentAmount').value); // Use the auto-filled value
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
+            if (!appointmentId || !amount || !paymentMethod) {
+                document.getElementById('createPaymentMessage').textContent = 'All fields are required for payment creation.';
+                document.getElementById('createPaymentMessage').className = 'message error';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${USER_SERVICE_URL}/make-payment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({
+                        user_id: currentUserId,
+                        appointment_id: appointmentId,
+                        amount: amount,
+                        payment_method: paymentMethod
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('createPaymentMessage').textContent = data.message;
+                document.getElementById('createPaymentMessage').className = response.ok ? 'message success' : 'message error';
+                if (response.ok) {
+                    fetchPayments();
+                    document.getElementById('paymentCreationForm').reset();
+                }
+            } catch (error) {
+                document.getElementById('createPaymentMessage').textContent = 'Error creating payment. Check service connection.';
+                document.getElementById('createPaymentMessage').className = 'message error';
+                console.error('Error:', error);
+            }
+        });
+
+        async function fetchPayments() {
+            if (!accessToken) {
+                document.getElementById('paymentsList').innerHTML = '<p class="info-message">Please log in to view payments.</p>';
+                return;
+            }
+            if (currentUserRole === 'dokter') {
+                document.getElementById('paymentsList').innerHTML = '<p class="info-message">Doctors do not have access to payment information.</p>';
+                document.getElementById('createPaymentSection').style.display = 'none';
+                return;
+            }
+
+            let url = `${PAYMENT_SERVICE_URL}/payments`;
+            if (currentUserRole === 'pasien') {
+                url += `?user_id=${currentUserId}`;
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${accessToken}` || '' }
+                });
+                const payments = await response.json();
+                const paymentsListDiv = document.getElementById('paymentsList');
+                paymentsListDiv.innerHTML = '';
+
+                if (payments.length === 0) {
+                    paymentsListDiv.innerHTML = '<p class="info-message">No payments found.</p>';
+                    return;
+                }
+
+                payments.forEach(payment => {
+                    const paymentCard = document.createElement('div');
+                    paymentCard.className = 'card payment-card';
+                    let buttons = '';
+                    // Patients now have NO buttons. Admin still has 'Mark Completed' and 'Mark Failed'
+                    if (currentUserRole === 'admin') {
+                        buttons += `<button class="btn btn-primary" onclick="updatePaymentStatus(${payment.id}, 'completed')">Mark Completed</button> `;
+                        buttons += `<button class="btn btn-warning" onclick="updatePaymentStatus(${payment.id}, 'failed')">Mark Failed</button> `;
+                    }
+
+                    paymentCard.innerHTML = `
+                        <h4>Payment Ref: ${payment.payment_reference}</h4>
+                        <p><strong>Appointment ID:</strong> ${payment.appointment_id}</p>
+                        <p><strong>Amount:</strong> Rp ${payment.amount.toLocaleString('id-ID')}</p>
+                        <p><strong>Method:</strong> ${payment.payment_method}</p>
+                        <p><strong>Status:</strong> <span class="status ${payment.status}">${payment.status.toUpperCase()}</span></p>
+                        <p><strong>Created:</strong> ${new Date(payment.created_at).toLocaleString()}</p>
+                        <p><strong>Paid:</strong> ${payment.paid_at ? new Date(payment.paid_at).toLocaleString() : 'N/A'}</p>
+                        <div class="card-actions">${buttons}</div>
+                    `;
+                    paymentsListDiv.appendChild(paymentCard);
+                });
+
+            } catch (error) {
+                document.getElementById('paymentsList').innerHTML = '<p class="error-message">Error loading payments. Check service connection.</p>';
+                console.error('Error:', error);
+            }
+        }
+
+        // Removed the confirmPayment function entirely, as patients can no longer confirm.
+        // The only confirmation logic is via admin's "Mark Completed" button now.
+        /*
+        async function confirmPayment(paymentId) {
+            if (!confirm('Are you sure you want to confirm this payment?')) return;
+            if (!accessToken || currentUserRole !== 'pasien') {
+                alert('Unauthorized action: Only patients can confirm their payments.');
+                return;
+            }
+            try {
+                const response = await fetch(`${PAYMENT_SERVICE_URL}/payments/${paymentId}/confirm`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${accessToken}` || '' }
+                });
+                const data = await response.json();
+                alert(data.message);
+                if (response.ok) {
+                    fetchPayments();
+                    fetchAppointments(); // Appointment status might change to 'paid'
+                }
+            } catch (error) {
+                alert('Error confirming payment. Check service connection.');
+                console.error('Error:', error);
+            }
+        }
+        */
+
+        async function updatePaymentStatus(paymentId, status) {
+            if (currentUserRole !== 'admin' || !accessToken) {
+                alert('Unauthorized action: Only admin can update payment status.');
+                return;
+            }
+            try {
+                const response = await fetch(`${PAYMENT_SERVICE_URL}/payments/${paymentId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+                const data = await response.json();
+                alert(data.message);
+                if (response.ok) {
+                    fetchPayments();
+                    if (status === 'completed') {
+                        fetchAppointments(); // Appointment status might change
+                    }
+                }
+            } catch (error) {
+                alert('Error updating payment status. Check service connection.');
+                console.error('Error:', error);
+            }
+        }
+
+
+        // Initial setup on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('home');
+            updateAuthNav(); // Update navigation items visibility based on initial login state
+        });
+    </script>
+</body>
+</html>

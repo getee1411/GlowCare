@@ -4,8 +4,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 import requests
 from model import db, User
+from flask_cors import CORS # Pastikan ini sudah ada
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'your-secret-key'
@@ -23,20 +25,26 @@ with app.app_context():
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    
+    print(f"Received registration data: {data}") # Tambahkan ini
+
     if User.query.filter_by(email=data['email']).first():
+        print(f"Email {data['email']} already exists.") # Tambahkan ini
         return jsonify({'message': 'Email already exists'}), 400
-    
+
+    selected_role = data.get('role', 'pasien')
+    print(f"Role to be saved: {selected_role}") # Tambahkan ini
+
     user = User(
         name=data['name'],
         email=data['email'],
         password_hash=generate_password_hash(data['password']),
-        role=data.get('role', 'pasien')
+        role=selected_role
     )
-    
+
     db.session.add(user)
     db.session.commit()
-    
+    print(f"User {user.email} with role {user.role} registered successfully.") # Tambahkan ini
+
     return jsonify({'message': 'User registered successfully'}), 201
 
 @app.route('/login', methods=['POST'])

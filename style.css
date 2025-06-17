@@ -3,7 +3,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f8f8f8;
+    background-color: white;
     color: #333;
     line-height: 1.6;
 }
@@ -19,7 +19,6 @@ body {
     background-color: #e040fb; /* Deep Purple Accent */
     color: white;
     padding: 15px 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .navbar .container {
@@ -73,7 +72,6 @@ section {
     padding: 30px;
     margin-bottom: 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
 h2 {
@@ -94,8 +92,9 @@ h3 {
 
 /* Hero Image on Home */
 .hero-image {
-    background: url('https://via.placeholder.com/1200x400?text=GlowCare+Salon+Spa') no-repeat center center/cover; /* Replace with your actual image */
-    height: 300px;
+    /* Ganti 'nama_gambar_anda.jpg' dengan nama file gambar yang Anda simpan di folder root */
+    background: url('./image.jpg') no-repeat center center/cover;
+    height: 500px;
     border-radius: 8px;
     margin-bottom: 30px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -334,3 +333,60 @@ footer {
         flex-direction: column;
     }
 }
+
+/* Styling for separate auth pages */
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5; /* Light grey background for auth pages */
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.auth-container .form-card {
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.auth-container h2 {
+    text-align: center;
+    color: #e040fb;
+    margin-bottom: 25px;
+    font-size: 2em;
+    border-bottom: none; /* Remove border for auth page headings */
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.95em;
+    color: #666;
+}
+
+.auth-switch a {
+    color: #e040fb;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+/* Penyesuaian untuk main content jika sebelumnya ada auth-forms */
+/* Pastikan tidak ada konflik dengan gaya .auth-forms di main sebelumnya */
+.main .auth-forms {
+    grid-template-columns: 1fr; /* Pastikan hanya satu kolom jika masih ada di main, atau hapus jika sudah tidak dipakai */
+    gap: 0;
+}
+
+/* Jika .form-card juga digunakan di halaman utama, mungkin perlu penyesuaian untuk menghindari duplikasi */
+/* Ini adalah contoh gaya khusus untuk form-card di auth-page */

@@ -11,12 +11,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
-# Service URLs
 APPOINTMENT_SERVICE_URL = 'http://localhost:5002'
 
 with app.app_context():
     db.create_all()
-    # Insert sample treatments if none exist
     if not Treatment.query.first():
         sample_treatments = [
             Treatment(name='Facial Treatment', description='Deep cleansing facial treatment', price=150000, duration=60),

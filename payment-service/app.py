@@ -13,7 +13,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
-# Service URLs
 APPOINTMENT_SERVICE_URL = 'http://localhost:5002'
 
 with app.app_context():
@@ -23,7 +22,6 @@ with app.app_context():
 def create_payment():
     data = request.get_json()
     
-    # Generate payment reference
     payment_reference = f"PAY-{uuid.uuid4().hex[:8].upper()}"
     
     payment = Payment(
@@ -50,9 +48,9 @@ def get_payments():
     user_id = request.args.get('user_id')
     
     if user_id:
-        payments = Payment.query.filter_by(user_id=user_id).order_by(Payment.created_at.desc()).all() # Ditambahkan .order_by(Payment.created_at.desc())
+        payments = Payment.query.filter_by(user_id=user_id).order_by(Payment.created_at.desc()).all()
     else:
-        payments = Payment.query.order_by(Payment.created_at.desc()).all() # Ditambahkan .order_by(Payment.created_at.desc())
+        payments = Payment.query.order_by(Payment.created_at.desc()).all()
     
     result = []
     for payment in payments:
@@ -93,7 +91,6 @@ def update_payment_status(payment_id):
     if not new_status:
         return jsonify({'message': 'Status is required'}), 400
 
-    # Logic to prevent changing from 'completed' to 'failed'
     if payment.status == 'completed' and new_status == 'failed':
         return jsonify({'message': 'Cannot change status from completed to failed'}), 400
         
@@ -103,16 +100,13 @@ def update_payment_status(payment_id):
     if new_status == 'completed' and old_status != 'completed':
         payment.paid_at = datetime.utcnow()
         
-        # Update appointment status
         try:
             response = requests.post(
                 f'{APPOINTMENT_SERVICE_URL}/appointments/{payment.appointment_id}/confirm-payment'
             )
-            # You might want to handle response status from appointment service here
         except requests.exceptions.RequestException as e:
-            # Log the error but allow payment status update to proceed
             print(f"Error updating appointment status for payment {payment_id}: {e}")
-            pass  # Continue even if appointment service is unavailable
+            pass
     
     db.session.commit()
     
@@ -128,13 +122,12 @@ def confirm_payment(payment_id):
     payment.status = 'completed'
     payment.paid_at = datetime.utcnow()
     
-    # Update appointment status
     try:
         response = requests.post(
             f'{APPOINTMENT_SERVICE_URL}/appointments/{payment.appointment_id}/confirm-payment'
         )
     except requests.exceptions.RequestException:
-        pass  # Continue even if appointment service is unavailable
+        pass
     
     db.session.commit()
     

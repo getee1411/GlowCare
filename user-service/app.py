@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 import requests
 from model import db, User
-from flask_cors import CORS # Pastikan ini sudah ada
+from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
@@ -15,7 +15,6 @@ app.config['JWT_SECRET_KEY'] = 'your-secret-key'
 db.init_app(app)
 jwt = JWTManager(app)
 
-# Service URLs
 APPOINTMENT_SERVICE_URL = 'http://localhost:5002'
 PAYMENT_SERVICE_URL = 'http://localhost:5004'
 
@@ -25,14 +24,14 @@ with app.app_context():
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    print(f"Received registration data: {data}") # Tambahkan ini
+    print(f"Received registration data: {data}")
 
     if User.query.filter_by(email=data['email']).first():
-        print(f"Email {data['email']} already exists.") # Tambahkan ini
+        print(f"Email {data['email']} already exists.")
         return jsonify({'message': 'Email already exists'}), 400
 
     selected_role = data.get('role', 'pasien')
-    print(f"Role to be saved: {selected_role}") # Tambahkan ini
+    print(f"Role to be saved: {selected_role}")
 
     user = User(
         name=data['name'],
@@ -43,7 +42,7 @@ def register():
 
     db.session.add(user)
     db.session.commit()
-    print(f"User {user.email} with role {user.role} registered successfully.") # Tambahkan ini
+    print(f"User {user.email} with role {user.role} registered successfully.")
 
     return jsonify({'message': 'User registered successfully'}), 201
 

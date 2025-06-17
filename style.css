@@ -335,12 +335,13 @@ footer {
 }
 
 /* Styling for separate auth pages */
-.auth-page {
+.auth-page-main {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    min-height: calc(100vh - 120px); /* Ensure full viewport height minus header and footer */
     background-color: #f0f2f5; /* Light grey background for auth pages */
+    padding-bottom: 60px; /* Add padding for the footer */
 }
 
 .auth-container {
@@ -380,6 +381,8 @@ footer {
 .auth-switch a:hover {
     text-decoration: underline;
 }
+
+/* Existing styles for other elements remain the same */
 
 /* Penyesuaian untuk main content jika sebelumnya ada auth-forms */
 /* Pastikan tidak ada konflik dengan gaya .auth-forms di main sebelumnya */

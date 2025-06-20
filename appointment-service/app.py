@@ -39,7 +39,6 @@ def create_appointment():
         print(f"=== CREATE APPOINTMENT ===")
         print(f"Received data: {data}")
         
-        # Validate required fields
         if not data:
             print("❌ No data provided")
             return jsonify({'message': 'No data provided'}), 400
@@ -50,7 +49,6 @@ def create_appointment():
                 print(f"❌ Missing field: {field}")
                 return jsonify({'message': f'Missing required field: {field}'}), 400
         
-        # Parse datetime
         appointment_date_str = data['appointment_date']
         try:
             if 'T' in appointment_date_str:
@@ -61,7 +59,6 @@ def create_appointment():
             print(f"❌ Date parsing error: {e}")
             return jsonify({'message': 'Invalid date format. Use YYYY-MM-DD HH:MM or YYYY-MM-DDTHH:MM'}), 400
         
-        # Create appointment
         appointment = Appointment(
             user_id=int(data['user_id']),
             treatment_id=int(data['treatment_id']),
@@ -74,7 +71,6 @@ def create_appointment():
         
         print(f"✅ Appointment created successfully: ID={appointment.id}, User={appointment.user_id}, Treatment={appointment.treatment_id}")
         
-        # Enhanced response with all details
         return jsonify({
             'success': True,
             'message': f'Appointment created successfully! Your appointment ID is #{appointment.id}',

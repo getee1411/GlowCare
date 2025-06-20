@@ -14,7 +14,6 @@ APPOINTMENT_SERVICE_URL = 'http://localhost:5002'
 
 with app.app_context():
     db.create_all()
-    # Add default treatments if none exist
     if not Treatment.query.first():
         default_treatments = [
             Treatment(name='Facial Treatment', description='Deep cleansing and moisturizing facial', price=150000, duration=60),

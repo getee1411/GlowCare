@@ -7,7 +7,7 @@ from model import db, User
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["*"])  # Allow all origins for development
+CORS(app, origins=["*"])
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'your-secret-key'
@@ -21,7 +21,6 @@ PAYMENT_SERVICE_URL = 'http://localhost:5004'
 with app.app_context():
     db.create_all()
 
-# Home endpoint
 @app.route('/', methods=['GET'])
 def home():
     return jsonify({
@@ -33,7 +32,7 @@ def home():
             'register': 'POST /register',
             'login': 'POST /login',
             'profile': 'GET/PUT /profile (auth required)',
-            'appointments': 'GET /appointments (auth required)',
+            'appointments': 'GET /appoin#tments (auth required)',
             'book_appointment': 'POST /book-appointment (auth required)',
             'make_payment': 'POST /make-payment (auth required)'
         }
@@ -45,7 +44,6 @@ def register():
         data = request.get_json()
         print(f"Received registration data: {data}")
 
-        # Validate required fields
         if not data or not data.get('email') or not data.get('password') or not data.get('name'):
             return jsonify({'message': 'Missing required fields'}), 400
 
@@ -140,7 +138,6 @@ def update_profile():
         print(f"Profile update error: {str(e)}")
         return jsonify({'message': 'Failed to update profile'}), 500
 
-# Health check endpoint
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'healthy', 'service': 'user-service'}), 200
@@ -193,10 +190,8 @@ def view_appointments():
         print(f"Fetching appointments for user {user_id} with role {user.role}")
         
         if user.role == 'pasien':
-            # Patient can only see their own appointments
             url = f'{APPOINTMENT_SERVICE_URL}/appointments?user_id={user_id}'
         else:
-            # Admin and doctors can see all appointments
             url = f'{APPOINTMENT_SERVICE_URL}/appointments'
         
         print(f"Making request to: {url}")

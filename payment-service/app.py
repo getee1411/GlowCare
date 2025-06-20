@@ -9,7 +9,6 @@ from model import db, Payment
 app = Flask(__name__)
 CORS(app)
 
-# Configure database
 db_path = os.path.join(os.path.dirname(__file__), 'payments.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -66,7 +65,6 @@ def create_payment():
                 print(f"❌ Missing field: {field}")
                 return jsonify({'message': f'Missing required field: {field}'}), 400
         
-        # Validate data types
         try:
             user_id = int(data['user_id'])
             appointment_id = int(data['appointment_id'])
@@ -75,7 +73,6 @@ def create_payment():
             print(f"❌ Invalid data type: {e}")
             return jsonify({'message': 'Invalid data types. user_id, appointment_id, and amount must be integers'}), 400
         
-        # Check if payment already exists for this appointment
         existing_payment = Payment.query.filter_by(appointment_id=appointment_id).first()
         if existing_payment:
             print(f"❌ Payment already exists for appointment {appointment_id}")
@@ -85,7 +82,6 @@ def create_payment():
                 'payment_reference': existing_payment.payment_reference
             }), 409
         
-        # Generate unique payment reference
         payment_reference = f"PAY-{datetime.now().strftime('%Y%m%d%H%M%S')}-{str(uuid.uuid4())[:8].upper()}"
         
         print(f"Creating payment with reference: {payment_reference}")

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GlowCare API Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .test-section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+      }
+      button {
+        padding: 10px 15px;
+        margin: 5px;
+        cursor: pointer;
+      }
+      .result {
+        background: #f5f5f5;
+        padding: 10px;
+        margin: 10px 0;
+        white-space: pre-wrap;
+      }
+      .success {
+        color: green;
+      }
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>GlowCare User Service API Test</h1>
+
+    <div class="test-section">
+      <h3>1. Health Check</h3>
+      <button onclick="testHealth()">Test Health</button>
+      <div id="healthResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>2. User Registration</h3>
+      <input type="text" id="regName" placeholder="Name" value="John Doe" />
+      <input type="email" id="regEmail" placeholder="Email" value="john@test.com" />
+      <input type="password" id="regPassword" placeholder="Password" value="password123" />
+      <select id="regRole">
+        <option value="pasien">Pasien</option>
+        <option value="dokter">Dokter</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button onclick="testRegister()">Register</button>
+      <div id="registerResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>3. User Login</h3>
+      <input type="email" id="loginEmail" placeholder="Email" value="john@test.com" />
+      <input type="password" id="loginPassword" placeholder="Password" value="password123" />
+      <button onclick="testLogin()">Login</button>
+      <div id="loginResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>4. Get Profile (Auth Required)</h3>
+      <input type="text" id="token" placeholder="Paste access token here" style="width: 300px" />
+      <button onclick="testProfile()">Get Profile</button>
+      <div id="profileResult" class="result"></div>
+    </div>
+
+    <script>
+      const API_BASE = "http://localhost:5001";
+
+      async function testHealth() {
+        try {
+          const response = await fetch(`${API_BASE}/health`);
+          const data = await response.json();
+          document.getElementById("healthResult").innerHTML = `Status: ${response.status}\n${JSON.stringify(data, null, 2)}`;
+          document.getElementById("healthResult").className = "result success";
+        } catch (error) {
+          document.getElementById("healthResult").innerHTML = `Error: ${error.message}`;
+          document.getElementById("healthResult").className = "result error";
+        }
+      }
+
+      async function testRegister() {
+        const name = document.getElementById("regName").value;
+        const email = document.getElementById("regEmail").value;
+        const password = document.getElementById("regPassword").value;
+        const role = document.getElementById("regRole").value;
+
+        try {
+          const response = await fetch(`${API_BASE}/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password, role }),
+          });
+          const data = await response.json();
+          document.getElementById("registerResult").innerHTML = `Status: ${response.status}\n${JSON.stringify(data, null, 2)}`;
+          document.getElementById("registerResult").className = response.ok ? "result success" : "result error";
+        } catch (error) {
+          document.getElementById("registerResult").innerHTML = `Error: ${error.message}`;
+          document.getElementById("registerResult").className = "result error";
+        }
+      }
+
+      async function testLogin() {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
+        try {
+          const response = await fetch(`${API_BASE}/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+          const data = await response.json();
+          document.getElementById("loginResult").innerHTML = `Status: ${response.status}\n${JSON.stringify(data, null, 2)}`;
+          document.getElementById("loginResult").className = response.ok ? "result success" : "result error";
+
+          if (response.ok && data.access_token) {
+            document.getElementById("token").value = data.access_token;
+          }
+        } catch (error) {
+          document.getElementById("loginResult").innerHTML = `Error: ${error.message}`;
+          document.getElementById("loginResult").className = "result error";
+        }
+      }
+
+      async function testProfile() {
+        const token = document.getElementById("token").value;
+
+        if (!token) {
+          alert("Please login first to get access token");
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE}/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await response.json();
+          document.getElementById("profileResult").innerHTML = `Status: ${response.status}\n${JSON.stringify(data, null, 2)}`;
+          document.getElementById("profileResult").className = response.ok ? "result success" : "result error";
+        } catch (error) {
+          document.getElementById("profileResult").innerHTML = `Error: ${error.message}`;
+          document.getElementById("profileResult").className = "result error";
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,137 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - GlowCare</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  </head>
+  <body>
     <header class="navbar">
-        <div class="container">
-            <a href="index.html" class="logo">GlowCare</a> <nav>
-                <ul>
-                    <li><a href="index.html" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="index.html" onclick="showSection('treatments')"><i class="fas fa-spa"></i> Treatments</a></li>
-                    <li id="appointmentsNavItem" style="display:none;"><a href="index.html" onclick="showSection('appointments')"><i class="fas fa-calendar-alt"></i> Appointments</a></li>
-                    <li id="paymentsNavItem" style="display:none;"><a href="index.html" onclick="showSection('payments')"><i class="fas fa-credit-card"></i> Payments</a></li>
-                    <li id="profileNavItem" style="display:none;"><a href="index.html" onclick="showSection('profile')"><i class="fas fa-user"></i> Profile</a></li>
-                    <li id="authNavItem"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login/Register</a></li>
-                    <li id="logoutNavItem" style="display:none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                </ul>
-            </nav>
-        </div>
+      <div class="container">
+        <a href="index.html" class="logo">GlowCare</a>
+        <nav>
+          <ul>
+            <li>
+              <a href="index.html" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a>
+            </li>
+            <li>
+              <a href="index.html" onclick="showSection('treatments')"><i class="fas fa-spa"></i> Treatments</a>
+            </li>
+            <li id="appointmentsNavItem" style="display: none">
+              <a href="index.html" onclick="showSection('appointments')"><i class="fas fa-calendar-alt"></i> Appointments</a>
+            </li>
+            <li id="paymentsNavItem" style="display: none">
+              <a href="index.html" onclick="showSection('payments')"><i class="fas fa-credit-card"></i> Payments</a>
+            </li>
+            <li id="profileNavItem" style="display: none">
+              <a href="index.html" onclick="showSection('profile')"><i class="fas fa-user"></i> Profile</a>
+            </li>
+            <li id="authNavItem">
+              <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login/Register</a>
+            </li>
+            <li id="logoutNavItem" style="display: none">
+              <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </header>
 
-    <main class="auth-page-main"> <div class="auth-container">
-            <div class="form-card">
-                <h2>GlowCare</h2>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="loginEmail">Email:</label>
-                        <input type="email" id="loginEmail" placeholder="your@example.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Password:</label>
-                        <input type="password" id="loginPassword" placeholder="********" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </form>
-                <p id="loginMessage" class="message"></p>
-                <p class="auth-switch">Don't have an account? <a href="register.html">Register here</a></p>
+    <main class="auth-page-main">
+      <div class="auth-container">
+        <div class="form-card">
+          <h2>GlowCare</h2>
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="loginEmail">Email:</label>
+              <input type="email" id="loginEmail" placeholder="your@example.com" required />
             </div>
+            <div class="form-group">
+              <label for="loginPassword">Password:</label>
+              <input type="password" id="loginPassword" placeholder="********" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
+          <p id="loginMessage" class="message"></p>
+          <p class="auth-switch">Don't have an account? <a href="register.html">Register here</a></p>
         </div>
+      </div>
     </main>
 
     <script>
-        const USER_SERVICE_URL = 'http://localhost:5001';
+      const USER_SERVICE_URL = "http://localhost:5001";
 
-        // Variabel dan fungsi navbar yang sama seperti di index.html
-        let accessToken = localStorage.getItem('access_token') || null;
-        let currentUserRole = localStorage.getItem('user_role') || null;
-        let currentUserId = localStorage.getItem('user_id') || null;
-
-        function updateAuthNav() {
-            document.getElementById('appointmentsNavItem').style.display = 'none';
-            document.getElementById('paymentsNavItem').style.display = 'none';
-            document.getElementById('profileNavItem').style.display = 'none';
-            document.getElementById('logoutNavItem').style.display = 'none';
-            document.getElementById('authNavItem').style.display = 'list-item';
-
-            if (accessToken) {
-                document.getElementById('authNavItem').style.display = 'none';
-                document.getElementById('profileNavItem').style.display = 'list-item';
-                document.getElementById('logoutNavItem').style.display = 'list-item';
-
-                if (currentUserRole === 'pasien' || currentUserRole === 'dokter' || currentUserRole === 'admin') {
-                    document.getElementById('appointmentsNavItem').style.display = 'list-item';
-                }
-                if (currentUserRole === 'pasien' || currentUserRole === 'admin') {
-                    document.getElementById('paymentsNavItem').style.display = 'list-item';
-                }
-            }
+      // Check if backend is running
+      async function checkBackendConnection() {
+        try {
+          const response = await fetch(`${USER_SERVICE_URL}/health`);
+          if (!response.ok) {
+            throw new Error("Backend not responding");
+          }
+          console.log("Backend connection: OK");
+        } catch (error) {
+          console.error("Backend connection failed:", error);
+          const loginMessage = document.getElementById("loginMessage");
+          loginMessage.textContent = "Cannot connect to server. Please make sure the backend is running.";
+          loginMessage.className = "message error";
         }
+      }
 
-        function showSection(sectionId) {
-            // Pada halaman login/register, showSection tidak akan mengubah section di halaman ini,
-            // melainkan akan mengarahkan ke index.html dan menampilkan section yang diminta di sana.
-            if (sectionId === 'home') {
-                window.location.href = 'index.html';
-            } else if (sectionId === 'profile' && !accessToken) {
-                alert('Please log in to view your profile.');
-                window.location.href = 'login.html';
-            } else {
-                window.location.href = `index.html#${sectionId}`; // Arahkan ke index.html dengan hash
-            }
+      // Variabel dan fungsi navbar yang sama seperti di index.html
+      let accessToken = localStorage.getItem("access_token") || null;
+      let currentUserRole = localStorage.getItem("user_role") || null;
+      let currentUserId = localStorage.getItem("user_id") || null;
+
+      function updateAuthNav() {
+        document.getElementById("appointmentsNavItem").style.display = "none";
+        document.getElementById("paymentsNavItem").style.display = "none";
+        document.getElementById("profileNavItem").style.display = "none";
+        document.getElementById("logoutNavItem").style.display = "none";
+        document.getElementById("authNavItem").style.display = "list-item";
+
+        if (accessToken) {
+          document.getElementById("authNavItem").style.display = "none";
+          document.getElementById("profileNavItem").style.display = "list-item";
+          document.getElementById("logoutNavItem").style.display = "list-item";
+
+          if (currentUserRole === "pasien" || currentUserRole === "dokter" || currentUserRole === "admin") {
+            document.getElementById("appointmentsNavItem").style.display = "list-item";
+          }
+          if (currentUserRole === "pasien" || currentUserRole === "admin") {
+            document.getElementById("paymentsNavItem").style.display = "list-item";
+          }
         }
+      }
 
-        function logout() {
-            accessToken = null;
-            currentUserRole = null;
-            currentUserId = null;
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('user_role');
-            localStorage.removeItem('user_id');
-            alert('Logged out successfully.');
-            window.location.href = 'login.html'; // Tetap di halaman login setelah logout dari sini
+      function showSection(sectionId) {
+        // Pada halaman login/register, showSection tidak akan mengubah section di halaman ini,
+        // melainkan akan mengarahkan ke index.html dan menampilkan section yang diminta di sana.
+        if (sectionId === "home") {
+          window.location.href = "index.html";
+        } else if (sectionId === "profile" && !accessToken) {
+          alert("Please log in to view your profile.");
+          window.location.href = "login.html";
+        } else {
+          window.location.href = `index.html#${sectionId}`; // Arahkan ke index.html dengan hash
         }
+      }
 
-        // Logic login
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const loginMessage = document.getElementById('loginMessage');
+      function logout() {
+        accessToken = null;
+        currentUserRole = null;
+        currentUserId = null;
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user_role");
+        localStorage.removeItem("user_id");
+        alert("Logged out successfully.");
+        window.location.href = "login.html"; // Tetap di halaman login setelah logout dari sini
+      }
 
-            try {
-                const response = await fetch(`${USER_SERVICE_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    localStorage.setItem('access_token', data.access_token);
-                    localStorage.setItem('user_role', data.role);
-                    localStorage.setItem('user_id', data.user_id);
-                    loginMessage.textContent = 'Login successful! Redirecting...';
-                    loginMessage.className = 'message success';
-                    window.location.href = 'index.html'; // Redirect ke index.html setelah login
-                } else {
-                    loginMessage.textContent = data.message || 'Login failed. Invalid credentials.';
-                    loginMessage.className = 'message error';
-                }
-            } catch (error) {
-                loginMessage.textContent = 'Error during login. Please check network.';
-                loginMessage.className = 'message error';
-                console.error('Error:', error);
-            }
-        });
+      // Enhanced login form handler
+      document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+        const loginMessage = document.getElementById("loginMessage");
 
-        document.addEventListener('DOMContentLoaded', () => {
-            updateAuthNav(); // Update navbar saat halaman dimuat
-        });
+        // Clear previous messages
+        loginMessage.textContent = "";
+        loginMessage.className = "message";
+
+        // Disable submit button
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+
+        try {
+          const response = await fetch(`${USER_SERVICE_URL}/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            // Store auth data
+            localStorage.setItem("access_token", data.access_token);
+            localStorage.setItem("user_role", data.role);
+            localStorage.setItem("user_id", data.user_id);
+            localStorage.setItem("user_name", data.name);
+            localStorage.setItem("just_logged_in", "true"); // Set flag for successful login
+
+            loginMessage.textContent = `✅ Login successful! Welcome, ${data.name}!`;
+            loginMessage.className = "message success";
+
+            console.log("✅ Login successful:", {
+              role: data.role,
+              name: data.name,
+              userId: data.user_id,
+            });
+
+            // Redirect to main page with login success indicator
+            setTimeout(() => {
+              window.location.href = "index.html?login=success";
+            }, 1000);
+          } else {
+            loginMessage.textContent = data.message || "Login failed. Invalid credentials.";
+            loginMessage.className = "message error";
+            console.error("❌ Login failed:", data.message);
+          }
+        } catch (error) {
+          console.error("Login error:", error);
+          loginMessage.textContent = "❌ Cannot connect to server. Please check if the backend is running.";
+          loginMessage.className = "message error";
+        } finally {
+          // Re-enable submit button
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        updateAuthNav();
+        checkBackendConnection();
+      });
     </script>
-</body>
+  </body>
 </html>

@@ -8,9 +8,9 @@ class Payment(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     appointment_id = db.Column(db.Integer, nullable=False)
     amount = db.Column(db.Integer, nullable=False)  # Amount in Rupiah
-    payment_method = db.Column(db.String(50), nullable=False)  # cash, transfer, credit_card, etc.
-    payment_reference = db.Column(db.String(100), unique=True, nullable=False)
-    status = db.Column(db.String(20), nullable=False, default='pending')  # pending, completed, failed, cancelled
+    payment_method = db.Column(db.String(50), nullable=False)  # transfer, cash, credit_card
+    payment_reference = db.Column(db.String(50), unique=True, nullable=False)
+    status = db.Column(db.String(20), nullable=False, default='pending')  # pending, completed, failed
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     paid_at = db.Column(db.DateTime)
     

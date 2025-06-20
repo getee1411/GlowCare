@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  user:
+    build: ./user-service
+    ports:
+      - "5001:5000"
+    restart: unless-stopped
+
+  appointment:
+    build: ./appointment-service
+    ports:
+      - "5002:5000"
+    restart: unless-stopped
+
+  payment:
+    build: ./payment-service
+    ports:
+      - "5003:5000"
+    restart: unless-stopped
+
+  treatment:
+    build: ./treatment-service
+    ports:
+      - "5004:5000"
+    restart: unless-stopped
